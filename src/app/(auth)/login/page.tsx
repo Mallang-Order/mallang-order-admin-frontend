@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
@@ -41,11 +42,32 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      // TODO: Implement your login logic here
-      console.log('Form submitted:', data);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const { accessToken, refreshToken } = await response.json();
+
+      // Store tokens in localStorage
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+
+      // Store tokens in cookies
+      document.cookie = `accessToken=${accessToken}; path=/`;
+      document.cookie = `refreshToken=${refreshToken}; path=/`;
+
       router.push('/dashboard'); // Redirect to dashboard after successful login
     } catch (error) {
       console.error('Login failed:', error);
+      toast('로그인에 실패했습니다');
     }
   };
 
@@ -77,7 +99,7 @@ export default function Login() {
                   {...register('email')}
                   className={`appearance-none rounded-[8px] relative block w-full px-3 py-2 border ${
                     errors.email ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm`}
+                  } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm `}
                   placeholder='youremail@example.com'
                 />
                 {email && (
@@ -134,7 +156,7 @@ export default function Login() {
             <button
               type='submit'
               disabled={isSubmitting}
-              className='mt-[18px] group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-ml-yellow focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+              className='hover:cursor-pointer mt-[18px] group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-ml-yellow focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {isSubmitting ? 'Logging in...' : 'Login'}
             </button>

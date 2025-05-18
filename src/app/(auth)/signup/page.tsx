@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const signUpSchema = z.object({
   name: z.string().min(1, '이름을 입력해주세요'),
@@ -39,32 +40,82 @@ export default function SignUp() {
 
   const handleEmailVerification = async () => {
     try {
-      // TODO: Implement email verification logic
-      console.log('Sending verification code to:', email);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/emailSend`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('이메일 인증번호 발송에 실패했습니다.');
+      }
+
       setShowVerificationInput(true);
+      toast('인증번호가 전송되었습니다');
     } catch (error) {
       console.error('Email verification failed:', error);
+      toast('이메일 인증번호 발송에 실패했습니다');
     }
   };
 
   const handleVerifyCode = async () => {
     try {
-      // TODO: Implement verification code check logic
-      console.log('Verifying code:', verificationCode);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/emailCheck`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            authNum: verificationCode,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('인증번호가 일치하지 않습니다.');
+      }
+
       setIsEmailVerified(true);
       setShowVerificationInput(false);
+      toast('이메일 인증에 성공했습니다.');
     } catch (error) {
       console.error('Code verification failed:', error);
+      toast('인증번호 확인에 실패했습니다');
     }
   };
 
   const handleStoreNameCheck = async () => {
     try {
-      // TODO: Implement store name duplicate check logic
-      console.log('Checking store name:', storeName);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/checkStoreName`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            adminName: storeName,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('이미 사용중인 가게 이름입니다.');
+      }
+
       setIsStoreNameChecked(true);
+      toast('사용 가능한 가게 이름입니다.');
     } catch (error) {
       console.error('Store name check failed:', error);
+      toast('가게 이름 중복 확인에 실패했습니다.');
     }
   };
 
@@ -74,20 +125,40 @@ export default function SignUp() {
 
   const onSubmit = async (data: SignUpFormData) => {
     if (!isEmailVerified) {
-      alert('이메일 인증이 필요합니다.');
+      toast('이메일 인증이 필요합니다.');
       return;
     }
     if (!isStoreNameChecked) {
-      alert('가게 이름 중복 확인이 필요합니다.');
+      toast('가게 이름 중복 확인이 필요합니다.');
       return;
     }
 
     try {
-      // TODO: Implement your sign-up logic here
-      console.log('Form submitted:', data);
-      router.push('/login'); // Redirect to login page after successful signup
-    } catch (error) {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/join`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+            adminName: data.name,
+            storeName: data.storeName,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('회원가입에 실패했습니다.');
+      }
+
+      toast('회원가입이 완료되었습니다.');
+      router.push('/login');
+    } catch (error: any) {
       console.error('Sign-up failed:', error);
+      toast(error.message || '회원가입에 실패했습니다.');
     }
   };
 
@@ -153,7 +224,7 @@ export default function SignUp() {
                   type='button'
                   onClick={handleStoreNameCheck}
                   disabled={!storeName || isStoreNameChecked}
-                  className='border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2  disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='border flex-1 border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2  disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   {isStoreNameChecked ? '확인완료' : '중복확인'}
                 </button>
@@ -181,7 +252,7 @@ export default function SignUp() {
                   type='button'
                   onClick={handleEmailVerification}
                   disabled={!email || isEmailVerified}
-                  className='border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2  disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='border border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2  disabled:opacity-50 disabled:cursor-not-allowed flex-1'
                 >
                   {isEmailVerified ? '인증완료' : '인증하기'}
                 </button>
@@ -197,17 +268,18 @@ export default function SignUp() {
               <div className='flex gap-3'>
                 <input
                   id='verificationCode'
+                  disabled={!showVerificationInput}
                   type='text'
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
-                  className='appearance-none rounded-[8px] relative block w-[265px] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm'
-                  placeholder='인증번호 6자리를 입력해주세요요'
+                  className='appearance-none rounded-[8px] relative block w-[265px] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm disabled:placeholder-ml-gray disabled:cursor-not-allowed'
+                  placeholder='인증번호 6자리를 입력해주세요'
                 />
                 <button
                   type='button'
                   onClick={handleVerifyCode}
                   disabled={!showVerificationInput}
-                  className='border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal flex-1 text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 '
+                  className='border border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal flex-1 text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   확인
                 </button>
