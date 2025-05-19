@@ -167,7 +167,7 @@ export default function SignUp() {
       <div className=''>
         <div>
           <div className='flex flex-col gap-2'>
-            <h2 className='text-[40px] inter-bold font-bold  text-gray-900'>
+            <h2 className='text-[40px] inter-bold font-bold text-gray-900'>
               Sign up
             </h2>
             <p className='inter-regular text-[15px] text-[#667085]'>
@@ -175,149 +175,148 @@ export default function SignUp() {
             </p>
           </div>
         </div>
-        <form
-          className='mt-2 gap-5 w-[360px]'
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div className='rounded-md'>
-            <div className='relative h-20 flex flex-col gap-2'>
-              <label htmlFor='name'>Your Name</label>
-              <div className='relative'>
-                <input
-                  id='name'
-                  type='text'
-                  {...register('name')}
-                  className={`appearance-none rounded-[8px] relative block w-full px-3 py-2 border ${
-                    errors.name ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm`}
-                  placeholder='김말랑'
-                />
-                {name && (
-                  <button
-                    type='button'
-                    onClick={handleClearName}
-                    className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 z-10'
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-              {errors.name && (
-                <p className='absolute bottom-[-8px] text-sm text-red-600'>
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-            <div className='relative h-20'>
-              <label htmlFor='storeName'>Store Name</label>
-              <div className='flex gap-3'>
-                <input
-                  id='storeName'
-                  type='text'
-                  {...register('storeName')}
-                  className={`appearance-none rounded-[8px] relative block w-[265px] px-3 py-2 border ${
-                    errors.storeName ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm`}
-                  placeholder='Store Name'
-                />
-                <button
-                  type='button'
-                  onClick={handleStoreNameCheck}
-                  disabled={!storeName || isStoreNameChecked}
-                  className='border flex-1 border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2  disabled:opacity-50 disabled:cursor-not-allowed'
-                >
-                  {isStoreNameChecked ? '확인완료' : '중복확인'}
-                </button>
-              </div>
-              {errors.storeName && (
-                <p className='absolute bottom-0 text-sm text-red-600'>
-                  {errors.storeName.message}
-                </p>
-              )}
-            </div>
-            <div className='relative h-20'>
-              <label htmlFor='email'>Email</label>
-              <div className='flex gap-3'>
-                <input
-                  id='email'
-                  type='email'
-                  autoComplete='email'
-                  {...register('email')}
-                  className={`appearance-none rounded-[8px] relative block w-[265px] px-3 py-2 border ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm`}
-                  placeholder='youremail@example.com'
-                />
-                <button
-                  type='button'
-                  onClick={handleEmailVerification}
-                  disabled={!email || isEmailVerified}
-                  className='border border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2  disabled:opacity-50 disabled:cursor-not-allowed flex-1'
-                >
-                  {isEmailVerified ? '인증완료' : '인증하기'}
-                </button>
-              </div>
-              {errors.email && (
-                <p className='absolute bottom-0 text-sm text-red-600'>
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-            <div className='relative h-20'>
-              <label htmlFor='verificationCode'>Verification Code</label>
-              <div className='flex gap-3'>
-                <input
-                  id='verificationCode'
-                  disabled={!showVerificationInput}
-                  type='text'
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                  className='appearance-none rounded-[8px] relative block w-[265px] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm disabled:placeholder-ml-gray disabled:cursor-not-allowed'
-                  placeholder='인증번호 6자리를 입력해주세요'
-                />
-                <button
-                  type='button'
-                  onClick={handleVerifyCode}
-                  disabled={!showVerificationInput}
-                  className='border border-ml-yellow rounded-[8px] px-2 py-2.5 font-normal flex-1 text-ml-yellow bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
-                >
-                  확인
-                </button>
-              </div>
-            </div>
-            <div className='relative h-20'>
-              <label htmlFor='password'>Password</label>
+        <form className='mt-2 w-[360px]' onSubmit={handleSubmit(onSubmit)}>
+          {/* 이름 */}
+          <div className='flex flex-col mb-4'>
+            <label htmlFor='name'>Your Name</label>
+            <div className='relative'>
               <input
-                id='password'
-                type='password'
-                autoComplete='new-password'
-                {...register('password')}
-                className={`appearance-none rounded-[8px] relative block w-full px-3 py-2 border ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-ml-yellow focus:z-10 sm:text-sm`}
-                placeholder='영문, 숫자, 하나 이상의 특수문자를 포함하는 8 ~ 16자'
+                id='name'
+                type='text'
+                {...register('name')}
+                className={`appearance-none rounded-[8px] block w-full px-3 py-2 border ${
+                  errors.name ? 'border-indigo-600' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-indigo-600 sm:text-sm`}
+                placeholder='김말랑'
               />
-              {errors.password && (
-                <p className='absolute bottom-0 text-sm text-red-600'>
-                  {errors.password.message}
-                </p>
+              {name && (
+                <button
+                  type='button'
+                  onClick={handleClearName}
+                  className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 z-10'
+                >
+                  ✕
+                </button>
               )}
+            </div>
+            {errors.name && (
+              <p className='mt-1 text-sm text-indigo-600'>{errors.name.message}</p>
+            )}
+          </div>
+
+          {/* 가게 이름 */}
+          {/* 스토어네임 부분만 수정 */}
+          <div className='flex flex-col mb-4'>
+            <label htmlFor='storeName'>Store Name</label>
+            <div className='flex gap-3 items-center'>
+              <input
+                id='storeName'
+                type='text'
+                {...register('storeName')}
+                className={`appearance-none rounded-[8px] block w-full px-3 py-2 border ${
+                  errors.storeName ? 'border-indigo-600' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-indigo-600 sm:text-sm`}
+                placeholder='Store Name'
+                style={{ minHeight: '38px' }}  // 높이 고정으로 줄임 (원하는 높이로 조절 가능)
+              />
+              <button
+                type='button'
+                onClick={handleStoreNameCheck}
+                disabled={!storeName || isStoreNameChecked}
+                className='border border-indigo-600 rounded-[8px] px-4 py-1.5 font-normal text-indigo-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0'
+                style={{ height: '38px' }}  // 버튼 높이도 인풋과 맞춤
+              >
+                {isStoreNameChecked ? '확인완료' : '중복확인'}
+              </button>
+            </div>
+            {errors.storeName && (
+              <p className='mt-1 text-sm text-indigo-600'>{errors.storeName.message}</p>
+            )}
+          </div>
+
+
+          {/* 이메일 */}
+          <div className='flex flex-col mb-4'>
+            <label htmlFor='email'>Email</label>
+            <div className='flex gap-3'>
+              <input
+                id='email'
+                type='email'
+                autoComplete='email'
+                {...register('email')}
+                className={`appearance-none rounded-[8px] block w-full px-3 py-2 border ${
+                  errors.email ? 'border-indigo-600' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-indigo-600 sm:text-sm`}
+                placeholder='youremail@example.com'
+              />
+              <button
+                type='button'
+                onClick={handleEmailVerification}
+                disabled={!email || isEmailVerified}
+                className='border border-indigo-600 rounded-[8px] px-4 py-2 font-normal text-indigo-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0'
+              >
+                {isEmailVerified ? '인증완료' : '인증하기'}
+              </button>
+            </div>
+            {errors.email && (
+              <p className='mt-1 text-sm text-indigo-600'>{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* 인증번호 입력 */}
+          <div className='flex flex-col mb-4'>
+            <label htmlFor='verificationCode'>Verification Code</label>
+            <div className='flex gap-3'>
+              <input
+                id='verificationCode'
+                disabled={!showVerificationInput}
+                type='text'
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                className='appearance-none rounded-[8px] block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-indigo-600 sm:text-sm disabled:placeholder-indigo-300 disabled:cursor-not-allowed'
+                placeholder='인증번호 6자리를 입력해주세요'
+              />
+              <button
+                type='button'
+                onClick={handleVerifyCode}
+                disabled={!showVerificationInput}
+                className='border border-indigo-600 rounded-[8px] px-4 py-2 font-normal text-indigo-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0'
+              >
+                확인
+              </button>
             </div>
           </div>
 
-          <div>
-            <button
-              type='submit'
-              disabled={isSubmitting}
-              className='mt-[18px] group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-ml-yellow focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
-            >
-              {isSubmitting ? 'Signing up...' : 'Sign up'}
-            </button>
+          {/* 비밀번호 */}
+          <div className='flex flex-col mb-4'>
+            <label htmlFor='password'>Password</label>
+            <input
+              id='password'
+              type='password'
+              autoComplete='new-password'
+              {...register('password')}
+              className={`appearance-none rounded-[8px] block w-full px-3 py-2 border ${
+                errors.password ? 'border-indigo-600' : 'border-gray-300'
+              } placeholder-gray-500 text-gray-900 focus:outline-none focus:border-indigo-600 sm:text-sm`}
+              placeholder='영문, 숫자, 하나 이상의 특수문자를 포함하는 8 ~ 16자'
+            />
+            {errors.password && (
+              <p className='mt-1 text-sm text-indigo-600'>{errors.password.message}</p>
+            )}
           </div>
+
+          <button
+            type='submit'
+            disabled={isSubmitting}
+            className='mt-4 w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+          >
+            {isSubmitting ? 'Signing up...' : 'Sign up'}
+          </button>
         </form>
+
         <Link
           href='/login'
-          className='font-medium text-ml-yellow w-[360px] flex justify-center mt-[18px]'
+          className='font-medium text-indigo-600 w-[360px] flex justify-center mt-[18px]'
         >
           이미 회원이신가요? Login
         </Link>
